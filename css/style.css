@@ -254,3 +254,42 @@ kbd { font-family: var(--f-mono); font-size: 11px; font-weight: 400; opacity: .6
 @media (max-width: 440px) {
   .mode-btn { padding: 8px 10px 10px; font-size: 14px; }
 }
+
+/* ---------- 聞き取りクイズ ---------- */
+body:not([data-mode="quiz"]) .quiz { display: none; }
+body[data-mode="quiz"] .vowels, body[data-mode="quiz"] .judge, body[data-mode="quiz"] .game, body[data-mode="quiz"] .play { display: none; }
+body[data-mode="quiz"] .deck { grid-template-columns: 1fr; }
+body.q-asking .controls { visibility: hidden; }
+body.q-asking #voices { pointer-events: none; opacity: .5; }
+.quiz { min-width: 0; }
+.q-play { display: grid; gap: 12px; }
+.q-head { display: flex; gap: 10px 22px; align-items: center; flex-wrap: wrap; }
+.q-count { display: grid; line-height: 1.2; }
+.q-count small { font-size: 11px; color: var(--muted); }
+.q-count b { font-family: var(--f-mono); font-size: 22px; font-variant-numeric: tabular-nums; }
+.q-count i { font-style: normal; font-size: 13px; color: var(--muted); margin-left: 4px; }
+.q-voice { font-weight: 700; font-size: 14px; }
+.q-replay.ring { animation: ring 1.1s ease; }
+@keyframes ring { 0% { box-shadow: 0 0 0 0 var(--line); } 50% { box-shadow: 0 0 0 6px var(--grid); } 100% { box-shadow: 0 0 0 0 transparent; } }
+.q-answers { display: flex; gap: 10px; flex-wrap: wrap; }
+.q-ans {
+  --vc: var(--ink);
+  width: 76px; height: 76px; border-radius: 18px; border: 2px solid var(--line);
+  background: transparent; color: var(--ink);
+  display: grid; place-items: center; align-content: center;
+  transition: transform .12s ease, border-color .12s ease;
+}
+.q-ans .vk { font-family: var(--f-display); font-weight: 900; font-size: 36px; line-height: 1; }
+.q-ans .vr { font-family: var(--f-mono); font-size: 10px; opacity: .7; }
+.q-ans:not(:disabled):hover { transform: translateY(-2px); border-color: var(--ink); }
+.q-ans:disabled { cursor: default; opacity: .45; }
+.q-ans[data-state="answer"] { opacity: 1; background: var(--vc); border-color: var(--vc); color: var(--surface); }
+.q-ans[data-state="chosen"] { opacity: 1; border-color: var(--v-a); border-style: dashed; }
+.q-foot { display: flex; gap: 12px 20px; align-items: center; flex-wrap: wrap; }
+.q-foot .g-msg { flex: 1 1 280px; }
+.g-msg[data-kind="half"] { color: var(--v-e); }
+.q-next { background: var(--ink); }
+@media (max-width: 560px) {
+  .q-ans { width: 58px; height: 58px; }
+  .q-ans .vk { font-size: 28px; }
+}

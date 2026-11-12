@@ -87,9 +87,10 @@
         this.trail = [];
         g.fillStyle = muted; g.textAlign = 'center'; g.textBaseline = 'middle';
         g.font = `700 15px ${css('--f-display')}`;
-        g.fillText('むずかしいモードでは母音図は見えません', (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 - 12);
+        const msg = st.hiddenMsg || ['むずかしいモードでは母音図は見えません', 'スペクトルとスライダー、そして耳で作ろう'];
+        g.fillText(msg[0], (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 - 12);
         g.font = `13px ${css('--f-body')}`;
-        g.fillText('スペクトルとスライダー、そして耳で作ろう', (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 + 14);
+        g.fillText(msg[1], (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 + 14);
         return;
       }
 
@@ -125,7 +126,7 @@
 
       // 現在の点
       const x = this.lx(st.f2), y = this.ly(st.f1);
-      const jc = st.judge && st.mode === 'free' ? vowelColor(st.judge.vowel.id) : ink;
+      const jc = st.judge && (st.mode === 'free' || st.pointColored) ? vowelColor(st.judge.vowel.id) : ink;
       if (st.playing) {
         const r = 14 + 4 * Math.sin(performance.now() / 130);
         g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.strokeStyle = alpha(jc, 0.5); g.lineWidth = 2; g.stroke();
@@ -179,6 +180,15 @@
       g.clearRect(0, 0, W, H);
       const ink = css('--ink'), muted = css('--muted'), grid = css('--grid'), mono = css('--f-mono');
       const p = st.params;
+      if (st.spectrumHidden) {
+        this.handles = [];
+        g.fillStyle = muted; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.font = `700 15px ${css('--f-display')}`;
+        g.fillText('いまはスペクトルも見えません', W / 2, H / 2 - 12);
+        g.font = `13px ${css('--f-body')}`;
+        g.fillText('答えると、どんな音だったかが表示されます', W / 2, H / 2 + 14);
+        return;
+      }
 
       // 正規化の基準（包絡の最大値を 0dB にする）
       let ref = -Infinity;

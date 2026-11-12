@@ -213,8 +213,8 @@
       if (dirty || state.playing || state.held || plane.trail.length) {
         const free = state.mode === 'free';
         const v = {
-          ...state, params: params(), regions: view.regions, planeHidden: view.planeHidden,
-          highlight: !free ? null : state.selected || (state.judge && state.judge.closeness > 0.6 ? state.judge.vowel.id : null),
+          ...state, params: params(), regions: view.regions, planeHidden: view.planeHidden, spectrumHidden: view.spectrumHidden, hiddenMsg: view.hiddenMsg, pointColored: view.pointColored,
+          highlight: view.highlight !== undefined && !free ? view.highlight : !free ? null : state.selected || (state.judge && state.judge.closeness > 0.6 ? state.judge.vowel.id : null),
           ghost: free && state.selected ? selectedTarget() : null, ghostId: state.selected,
         };
         plane.draw(v); spec.draw(v);

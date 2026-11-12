@@ -36,19 +36,22 @@
     const App = window.App;
     if (mode === App.state.mode) return;
     stopGame();
+    if (App.state.mode === 'quiz' && window.Quiz) window.Quiz.leave();
     App.state.mode = mode;
     document.body.dataset.mode = mode;
     document.querySelectorAll('.mode-btn').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.mode === mode)));
+    Object.assign(App.view, { regions: true, planeHidden: false, spectrumHidden: false, highlight: undefined, hiddenMsg: undefined, pointColored: false });
+    document.body.classList.remove('q-asking');
     if (mode === 'maker') {
       show('ready'); renderReady();
-    } else {
-      Object.assign(App.view, { regions: true, planeHidden: false });
+    } else if (mode === 'quiz' && window.Quiz) {
+      window.Quiz.enter();
     }
     App.refresh(); App.markDirty();
   }
 
   function renderReady() {
-    document.querySelectorAll('.lv-btn').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === g.level)));
+    document.querySelectorAll('#g-levels .lv-btn').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.level === g.level)));
     const best = loadBest(g.level);
     $('#g-best').textContent = best ? `${LEVELS[g.level].label}の自己ベスト ${best}点` : `${LEVELS[g.level].label}はまだ記録なし`;
     applyLevelView();
@@ -200,8 +203,9 @@
   }
 
   // キーボード（ゲーム中）
-  function onKey(k) {
+  function onKey(k, e) {
     const App = window.App;
+    if (App.state.mode === 'quiz') return window.Quiz ? window.Quiz.onKey(k, e) : false;
     if (App.state.mode !== 'maker') return false;
     if (g.running) {
       if (k === 'enter') { check(); return true; }

@@ -24,7 +24,7 @@
   <nav class="modes" role="tablist" aria-label="遊び方">
     <button type="button" class="mode-btn" role="tab" data-mode="free" aria-selected="true">じゆうに遊ぶ</button>
     <button type="button" class="mode-btn" role="tab" data-mode="maker" aria-selected="false">母音メイカー</button>
-    <button type="button" class="mode-btn" role="tab" data-mode="quiz" aria-selected="false" disabled>聞き取りクイズ<small>準備中</small></button>
+    <button type="button" class="mode-btn" role="tab" data-mode="quiz" aria-selected="false">聞き取りクイズ</button>
   </nav>
 
   <section class="deck" aria-label="再生と母音の選択">
@@ -78,6 +78,44 @@
         </div>
       </div>
     </div>
+
+    <div class="quiz" id="quiz">
+      <div class="g-ready" id="q-ready">
+        <div class="g-intro">
+          <h2>聞き取りクイズ</h2>
+          <p>合成した音を聞いて、何の母音に聞こえたかを答えよう。全10問、1問10点。答えると、その音が母音図のどこにあったかが分かります。</p>
+        </div>
+        <div class="g-levels" id="q-levels" role="radiogroup" aria-label="難易度"></div>
+        <div class="g-go">
+          <button type="button" class="g-start" id="q-start">スタート <kbd>Enter</kbd></button>
+          <span class="g-best" id="q-best"></span>
+        </div>
+      </div>
+
+      <div class="q-play" id="q-play" hidden>
+        <div class="q-head">
+          <div class="q-count"><small>問題</small><b><span id="q-num">1</span><i>/ 10</i></b></div>
+          <div class="q-count"><small>スコア</small><b id="q-score">0</b></div>
+          <span class="q-voice" id="q-voice"></span>
+          <button type="button" class="g-sub q-replay" id="q-replay">もう一度聞く <kbd>R</kbd></button>
+          <button type="button" class="g-sub g-quit" id="q-quit">やめる</button>
+        </div>
+        <div class="q-answers" id="q-answers" aria-label="答え"></div>
+        <div class="q-foot">
+          <div class="g-msg" id="q-msg" aria-live="polite">どの母音に聞こえる？</div>
+          <button type="button" class="g-judge q-next" id="q-next" hidden>次の問題</button>
+        </div>
+      </div>
+
+      <div class="g-result" id="q-result" hidden>
+        <div class="r-main"><small>スコア</small><b id="qr-score">0</b><span id="qr-detail"></span></div>
+        <div class="r-best" id="qr-best"></div>
+        <div class="r-actions">
+          <button type="button" class="g-start" id="qr-again">もう一度 <kbd>Enter</kbd></button>
+          <button type="button" class="g-sub" id="qr-levels">難易度を選ぶ</button>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section class="plots">
@@ -95,7 +133,7 @@
     <div id="sliders"></div>
   </section>
 
-  <p class="keys">ゲーム中：<kbd>Enter</kbd> 判定、<kbd>H</kbd> お手本、<kbd>S</kbd> スキップ。じゆうに遊ぶ：<kbd>A</kbd><kbd>I</kbd><kbd>U</kbd><kbd>E</kbd><kbd>O</kbd> で代表値、<kbd>Space</kbd> で鳴らす／止める</p>
+  <p class="keys">母音メイカー：<kbd>Enter</kbd> 判定、<kbd>H</kbd> お手本、<kbd>S</kbd> スキップ。聞き取りクイズ：<kbd>A</kbd><kbd>I</kbd><kbd>U</kbd><kbd>E</kbd><kbd>O</kbd> で答える、<kbd>R</kbd> もう一度聞く。じゆうに遊ぶ：<kbd>A</kbd><kbd>I</kbd><kbd>U</kbd><kbd>E</kbd><kbd>O</kbd> で代表値、<kbd>Space</kbd> で鳴らす／止める</p>
 
   <details class="about">
     <summary>しくみ</summary>
@@ -109,5 +147,6 @@
 <script src="js/plots.js"></script>
 <script src="js/app.js"></script>
 <script src="js/game.js"></script>
+<script src="js/quiz.js"></script>
 </body>
 </html>
