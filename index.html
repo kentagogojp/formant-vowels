@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>母音工房</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="F0・F1・F2の周波数を動かして、ブラウザで「あいうえお」の声を作るフォルマント合成アプリ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Noto+Sans+JP:wght@400;700&family=Zen+Maru+Gothic:wght@700;900&display=swap">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>母音工房<span class="dots" aria-hidden="true"><i style="background:var(--v-a)"></i><i style="background:var(--v-i)"></i><i style="background:var(--v-u)"></i><i style="background:var(--v-e)"></i><i style="background:var(--v-o)"></i></span></h1>
+      <p>声の高さ F0 と、フォルマント F1・F2 を動かして「あいうえお」を作ろう</p>
+    </div>
+    <div class="seg" id="voices" role="radiogroup" aria-label="声のタイプ"></div>
+  </header>
+
+  <section class="deck" aria-label="再生と母音の選択">
+    <button type="button" class="play" id="play" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="play-label">鳴らす</span><kbd>Space</kbd></button>
+    <div class="vowels" id="vowels" aria-label="代表値"></div>
+    <div class="judge" id="judge" aria-live="polite">
+      <div class="judge-kana" id="judge-kana">あ</div>
+      <div class="judge-text" id="judge-text">「あ」に聞こえそう</div>
+      <div class="judge-bar"><div class="judge-meter" id="judge-meter"></div><span class="judge-pct" id="judge-pct">100%</span></div>
+    </div>
+  </section>
+
+  <section class="plots">
+    <figure class="panel">
+      <h2>F1-F2 母音図 <small>ドラッグで声が変わります</small></h2>
+      <canvas id="plane" aria-label="F1-F2平面。横軸F2、縦軸F1。ドラッグで周波数を変更"></canvas>
+    </figure>
+    <figure class="panel">
+      <h2>スペクトル <small>●をドラッグでフォルマントを移動。点線は選んだ母音のお手本</small></h2>
+      <canvas id="spectrum" aria-label="スペクトル表示。フォルマントのつまみを左右にドラッグして変更"></canvas>
+    </figure>
+  </section>
+
+  <section class="controls" aria-label="周波数の調整">
+    <div id="sliders"></div>
+  </section>
+
+  <p class="keys">キーボード：<kbd>A</kbd><kbd>I</kbd><kbd>U</kbd><kbd>E</kbd><kbd>O</kbd> で代表値、<kbd>Space</kbd> で鳴らす／止める</p>
+
+  <details class="about">
+    <summary>しくみ</summary>
+    <p>声は、声帯の振動でできる<b>ブザーのような音（音源）</b>が、喉から唇までの空間（<b>声道</b>）を通ることで作られます。声道は形によって特定の周波数を強める共鳴器としてはたらき、強められた周波数の山を<b>フォルマント</b>と呼びます。</p>
+    <p>低いほうから F1、F2、F3…と数えます。F1 はおもに口の開き具合、F2 は舌の前後の位置で変わり、日本語の5母音はこの2つでおおよそ聞き分けられます。<b>F0</b> は声帯が1秒に振動する回数で、声の高さを決めます。F4・F5 は固定値で、声を自然にするために入れています。</p>
+    <p>このアプリは、声門パルス（声帯音源のモデル）を共振器の直列つなぎに通す「ソース・フィルタ方式」でブラウザ内で音を作っています。</p>
+  </details>
+</div>
+<script src="js/data.js"></script>
+<script src="js/synth.js"></script>
+<script src="js/plots.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
