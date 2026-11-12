@@ -10,7 +10,7 @@
   const PASS = 0.5;         // 正解とみなす近さ
 
   const LEVELS = {
-    easy: { label: 'かんたん', desc: '母音図に「あいうえお」の領域が見える', regions: true, planeHidden: false },
+    easy: { label: 'かんたん', desc: '母音図に5つの領域が見える（どれが何の母音かは自分で）', regions: 'gray', planeHidden: false },
     normal: { label: 'ふつう', desc: '領域は見えない。目盛りと耳がたより', regions: false, planeHidden: false },
     hard: { label: 'むずかしい', desc: '母音図も見えない。スペクトルと数値と耳で', regions: false, planeHidden: true },
   };

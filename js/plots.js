@@ -99,12 +99,15 @@
       const sy = (H - P.t - P.b) / (Math.log(b1) - Math.log(a1));
       const R = 1.15;
       for (const v of (st.regions === false ? [] : VOWELS)) {
-        const t = target(v, st.voice), c = vowelColor(v.id);
+        // regions が 'gray' のときは、どれがどの母音か分からないように灰色・文字なしで描く
+        const gray = st.regions === 'gray';
+        const t = target(v, st.voice), c = gray ? muted : vowelColor(v.id);
         const cx = this.lx(t.f2), cy = this.ly(t.f1);
         const hi = st.highlight === v.id;
         g.beginPath(); g.ellipse(cx, cy, 0.18 * R * sx, 0.22 * R * sy, 0, 0, Math.PI * 2);
         g.fillStyle = alpha(c, hi ? 0.28 : 0.14); g.fill();
         g.strokeStyle = alpha(c, hi ? 0.9 : 0.45); g.lineWidth = hi ? 2 : 1.25; g.stroke();
+        if (gray) continue;
         g.fillStyle = c; g.font = `700 ${Math.max(18, Math.min(30, W / 18))}px ${css('--f-display')}`;
         g.textAlign = 'center'; g.textBaseline = 'middle';
         g.fillText(v.kana, cx, cy);
