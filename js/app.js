@@ -10,7 +10,10 @@
     f0: 120, f1: 800, f2: 1200, f3: 2500, f3on: false,
     playing: false, held: false,
     selected: 'a',
+    mode: 'free',
   };
+  // 描画の切り替え（ゲームの難易度で変える）
+  const view = { regions: true, planeHidden: false, judge: true, ghost: true };
 
   const SLIDERS = [
     { key: 'f0', name: 'F0', title: '声の高さ', hint: '声帯が1秒に震える回数' },
@@ -174,6 +177,7 @@
 
     const hold = { onDragStart: () => { state.held = true; if (!state.playing) { clearTimeout(pulseTimer); synth.startFresh(params()); } }, onDragEnd: () => { state.held = false; if (!state.playing) synth.stop(); } };
     const plane = new window.Plots.PlaneView($('#plane'), Object.assign({
+      canDrag: () => !view.planeHidden,
       onMove: ({ f1, f2 }) => { state.f1 = f1; state.f2 = f2; refresh(); },
     }, hold));
     const spec = new window.Plots.SpectrumView($('#spectrum'), Object.assign({
@@ -186,6 +190,12 @@
     document.addEventListener('keydown', (e) => {
       if (e.target.matches('input, textarea') || e.metaKey || e.ctrlKey || e.altKey) return;
       const k = e.key.toLowerCase();
+      if (state.mode !== 'free') {
+        if (k === 'enter' && e.target.matches('button')) return;
+        if (window.Game && window.Game.onKey(k, e)) { e.preventDefault(); return; }
+        if (k === ' ' && !e.target.matches('button')) { togglePlay(); e.preventDefault(); }
+        return;
+      }
       if (VOWELS.some((v) => v.id === k)) { selectVowel(k); e.preventDefault(); }
       else if (k === ' ' && !e.target.matches('button')) { togglePlay(); e.preventDefault(); }
     });
@@ -201,12 +211,13 @@
     const loop = (now) => {
       if (tween) tween(now);
       if (dirty || state.playing || state.held || plane.trail.length) {
-        const view = {
-          ...state, params: params(),
-          highlight: state.selected || (state.judge && state.judge.closeness > 0.6 ? state.judge.vowel.id : null),
-          ghost: state.selected ? selectedTarget() : null, ghostId: state.selected,
+        const free = state.mode === 'free';
+        const v = {
+          ...state, params: params(), regions: view.regions, planeHidden: view.planeHidden,
+          highlight: !free ? null : state.selected || (state.judge && state.judge.closeness > 0.6 ? state.judge.vowel.id : null),
+          ghost: free && state.selected ? selectedTarget() : null, ghostId: state.selected,
         };
-        plane.draw(view); spec.draw(view);
+        plane.draw(v); spec.draw(v);
         if (!state.playing && !state.held && !dirty && plane.trail.length) plane.trail.shift();
         dirty = false;
       }
@@ -215,6 +226,15 @@
     requestAnimationFrame(loop);
   }
 
-  window.App = { state, refresh, selectVowel, togglePlay, synth };
+  // 値をまとめて置き換える（ゲームのお題の開始位置など）。鳴っていればその値から鳴り直す
+  function setValues(vals) {
+    tween = null;
+    Object.assign(state, vals);
+    refresh();
+    if (state.playing) synth.startFresh(params());
+  }
+  function markDirty() { dirty = true; }
+
+  window.App = { state, view, refresh, selectVowel, togglePlay, synth, params, pulse, setValues, markDirty };
   document.addEventListener('DOMContentLoaded', init);
 })();

@@ -39,6 +39,7 @@
       this.h_ = handlers; this.trail = [];
       this.pad = { l: 60, r: 14, t: 26, b: 34 };
       canvas.addEventListener('pointerdown', (e) => {
+        if (this.h_.canDrag && !this.h_.canDrag()) return;
         canvas.setPointerCapture(e.pointerId); this.dragging = true;
         this.emit(e); this.h_.onDragStart && this.h_.onDragStart();
       });
@@ -82,12 +83,22 @@
       g.fillText('← F2 (Hz) 舌が前', P.l, P.t - 9);
       g.save(); g.translate(12, H - P.b); g.rotate(-Math.PI / 2); g.fillText('F1 (Hz) 口が開く →', 0, 0); g.restore();
 
+      if (st.planeHidden) {
+        this.trail = [];
+        g.fillStyle = muted; g.textAlign = 'center'; g.textBaseline = 'middle';
+        g.font = `700 15px ${css('--f-display')}`;
+        g.fillText('むずかしいモードでは母音図は見えません', (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 - 12);
+        g.font = `13px ${css('--f-body')}`;
+        g.fillText('スペクトルとスライダー、そして耳で作ろう', (P.l + W - P.r) / 2, (P.t + H - P.b) / 2 + 14);
+        return;
+      }
+
       // 母音の領域（楕円）
       const [a2, b2] = RANGE.f2, [a1, b1] = RANGE.f1;
       const sx = (W - P.l - P.r) / (Math.log(b2) - Math.log(a2));
       const sy = (H - P.t - P.b) / (Math.log(b1) - Math.log(a1));
       const R = 1.15;
-      for (const v of VOWELS) {
+      for (const v of (st.regions === false ? [] : VOWELS)) {
         const t = target(v, st.voice), c = vowelColor(v.id);
         const cx = this.lx(t.f2), cy = this.ly(t.f1);
         const hi = st.highlight === v.id;
@@ -111,7 +122,7 @@
 
       // 現在の点
       const x = this.lx(st.f2), y = this.ly(st.f1);
-      const jc = st.judge ? vowelColor(st.judge.vowel.id) : ink;
+      const jc = st.judge && st.mode === 'free' ? vowelColor(st.judge.vowel.id) : ink;
       if (st.playing) {
         const r = 14 + 4 * Math.sin(performance.now() / 130);
         g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.strokeStyle = alpha(jc, 0.5); g.lineWidth = 2; g.stroke();
