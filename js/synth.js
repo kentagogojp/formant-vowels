@@ -3,10 +3,10 @@
 (function () {
   'use strict';
 
-  // ---- AudioWorklet 側のコード（別スレッドで1サンプルずつ計算する） ----
-  const CORE_SRC = `
-const TWO_PI = Math.PI * 2;
-const NF = 5;
+  // ---- 合成の中身。1サンプルずつ計算する（AudioWorklet と予備の ScriptProcessor の両方で使う） ----
+  const TWO_PI = Math.PI * 2;
+  const NF = 5;
+
 class VoiceCore {
   constructor(sampleRate) {
     this.sr = sampleRate;
@@ -60,7 +60,8 @@ class VoiceCore {
     }
   }
 }
-`;
+
+  const CORE_SRC = 'const TWO_PI = Math.PI * 2; const NF = 5;\n' + VoiceCore.toString();
   const WORKLET_SRC = CORE_SRC + `
 class FormantVoice extends AudioWorkletProcessor {
   constructor() { super(); this.core = new VoiceCore(sampleRate); this.port.onmessage = (e) => this.core.set(e.data); }
@@ -88,7 +89,7 @@ registerProcessor('formant-voice', FormantVoice);
           this.post = (m) => this.node.port.postMessage(m);
         } catch (err) {
           // ファイルを直接開いた場合など AudioWorklet が使えないときの予備（ScriptProcessor）
-          const core = new (new Function(CORE_SRC + '; return VoiceCore;')())(this.ctx.sampleRate);
+          const core = new VoiceCore(this.ctx.sampleRate);
           this.node = this.ctx.createScriptProcessor(1024, 0, 1);
           this.node.onaudioprocess = (e) => core.render(e.outputBuffer.getChannelData(0));
           this.post = (m) => core.set(m);
