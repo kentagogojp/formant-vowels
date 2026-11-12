@@ -110,15 +110,23 @@
     const v = VOWELS.find((x) => x.id === id);
     const t = target(v, state.voice);
     state.selected = id;
-    glideTo({ f1: t.f1, f2: t.f2, f3: t.f3 });
-    if (!state.playing) pulse();
+    if (state.playing) {
+      // 鳴らし続けている間は、なめらかに移っていく
+      glideTo({ f1: t.f1, f2: t.f2, f3: t.f3 });
+    } else {
+      // 止まっているときは、その母音からいきなり鳴らす
+      tween = null;
+      Object.assign(state, { f1: t.f1, f2: t.f2, f3: t.f3 });
+      refresh();
+      pulse();
+    }
   }
 
   // 停止中にボタンを押したら短く鳴らす
   let pulseTimer = null;
   async function pulse() {
     clearTimeout(pulseTimer);
-    await synth.start();
+    await synth.startFresh(params());
     pulseTimer = setTimeout(() => { if (!state.playing && !state.held) synth.stop(); }, 650);
   }
 
@@ -128,7 +136,7 @@
     const b = $('#play');
     b.setAttribute('aria-pressed', String(on));
     b.querySelector('.play-label').textContent = on ? '止める' : '鳴らす';
-    if (on) await synth.start(); else if (!state.held) synth.stop();
+    if (on) { clearTimeout(pulseTimer); await synth.startFresh(params()); } else if (!state.held) synth.stop();
   }
 
   // ---------- 組み立て ----------
@@ -164,7 +172,7 @@
   function init() {
     buildVowels(); buildVoices(); buildSliders();
 
-    const hold = { onDragStart: () => { state.held = true; if (!state.playing) synth.start(); }, onDragEnd: () => { state.held = false; if (!state.playing) synth.stop(); } };
+    const hold = { onDragStart: () => { state.held = true; if (!state.playing) { clearTimeout(pulseTimer); synth.startFresh(params()); } }, onDragEnd: () => { state.held = false; if (!state.playing) synth.stop(); } };
     const plane = new window.Plots.PlaneView($('#plane'), Object.assign({
       onMove: ({ f1, f2 }) => { state.f1 = f1; state.f2 = f2; refresh(); },
     }, hold));

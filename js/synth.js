@@ -18,7 +18,15 @@ class VoiceCore {
     this.ms = 1e-3;
     this.coef();
   }
-  set(d) { for (const k in d) this.t[k] = d[k]; }
+  set(d) {
+    for (const k in d) this.t[k] = d[k];
+    if (d.snap) {
+      // 前の音から移動せず、いきなりこの値で鳴り始める
+      this.c.f0 = this.t.f0; this.c.f = this.t.f.slice();
+      this.y1.fill(0); this.y2.fill(0);
+      this.coef();
+    }
+  }
   coef() {
     const sampleRate = this.sr;
     const T = 1 / sampleRate;
@@ -104,10 +112,10 @@ registerProcessor('formant-voice', FormantVoice);
     }
 
     // params: { f0, f1, f2, f3, f3on, f4, f5 }
-    set(p) {
+    set(p, snap) {
       const msg = { f0: p.f0, f: [p.f1, p.f2, p.f3, p.f4, p.f5], on: [1, 1, p.f3on ? 1 : 0, 1, 1], bw: BW, oq: OQ };
       this.pending = msg;
-      if (this.post) this.post(msg);
+      if (this.post) this.post(snap ? Object.assign({ snap: true }, msg) : msg);
     }
 
     async start() {
@@ -116,6 +124,24 @@ registerProcessor('formant-voice', FormantVoice);
       const now = this.ctx.currentTime;
       this.master.gain.cancelScheduledValues(now);
       this.master.gain.setTargetAtTime(0.7, now, 0.02);
+      this.playing = true;
+    }
+
+    // 新しく鳴らし始める（前の音が残っていれば一瞬で消してから、指定の値で立ち上げる）
+    async startFresh(p) {
+      await this.init();
+      if (this.ctx.state !== 'running') await this.ctx.resume();
+      const g = this.master.gain;
+      if (g.value > 0.01) {
+        const t0 = this.ctx.currentTime;
+        g.cancelScheduledValues(t0); g.setTargetAtTime(0, t0, 0.004);
+        await new Promise((r) => setTimeout(r, 25));
+      }
+      this.set(p, true);
+      const now = this.ctx.currentTime;
+      g.cancelScheduledValues(now);
+      g.setValueAtTime(0, now);
+      g.setTargetAtTime(0.7, now + 0.01, 0.02);
       this.playing = true;
     }
 
