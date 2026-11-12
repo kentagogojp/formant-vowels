@@ -12,10 +12,86 @@
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<div class="wrap">
+<main class="landing" id="top-view">
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">ブラウザでできる声の実験室</p>
+      <h1 class="hero-title">母音工房<span class="dots" aria-hidden="true"><i style="background:var(--v-a)"></i><i style="background:var(--v-i)"></i><i style="background:var(--v-u)"></i><i style="background:var(--v-e)"></i><i style="background:var(--v-o)"></i></span></h1>
+      <p class="lead">「あ」と「い」のちがいは、声の中にある2つの<b>周波数の山</b>の位置で決まります。その山を指で動かして、コンピューターに「あいうえお」をしゃべらせてみよう。</p>
+      <div class="cta-row">
+        <a class="cta" href="#free">はじめる</a>
+        <span class="note">音が出ます。最初は音量を小さめにしてください</span>
+      </div>
+    </div>
+    <div class="listen" aria-label="5つの母音を聞いてみる">
+      <p class="listen-label">まずは聞いてみよう</p>
+      <div class="listen-row" id="listen-row"></div>
+      <p class="listen-caption">どれも、録音ではなく計算で作った声です</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>声ができるまで</h2>
+    <p class="how-lead">声は「音のもと」と「形を変えるフィルタ」の組み合わせでできています。音声学ではこれを<b>ソース・フィルタ理論</b>と呼びます。</p>
+    <ol class="steps">
+      <li>
+        <figure class="step-fig" id="fig-source"></figure>
+        <h3>1. 声帯がブザー音を出す</h3>
+        <p>声帯が1秒間に何百回も震えて、「ブー」というブザーのような音が出ます。震える速さが <b>F0</b>（基本周波数）で、声の高さになります。この音にはF0の整数倍の成分（倍音）がずらりと並んでいます。</p>
+      </li>
+      <li>
+        <figure class="step-fig" id="fig-filter"></figure>
+        <h3>2. 口の形がフィルタになる</h3>
+        <p>喉から唇までの空間（声道）は、形に応じて特定の周波数を強めます。強められる山を <b>フォルマント</b> と呼び、低いほうから F1、F2、F3…と数えます。</p>
+      </li>
+      <li>
+        <figure class="step-fig" id="fig-output"></figure>
+        <h3>3. 母音が聞こえる</h3>
+        <p>ブザー音がフィルタを通ると、山の位置に応じて「あ」にも「い」にも聞こえます。日本語の5母音は、F1 と F2 の2つの山の位置でだいたい聞き分けられます。</p>
+      </li>
+    </ol>
+    <div class="ff-table" role="table" aria-label="フォルマントと口の動き">
+      <div role="row"><b role="cell">F1</b><span role="cell">口の開き</span><span role="cell">口を大きく開ける「あ」で高く、すぼめる「い」「う」で低い</span></div>
+      <div role="row"><b role="cell">F2</b><span role="cell">舌の前後</span><span role="cell">舌が前に出る「い」で高く、奥に引く「お」で低い</span></div>
+      <div role="row"><b role="cell">F3</b><span role="cell">声の明るさ</span><span role="cell">母音の区別にはあまり使われないが、声らしさや個人差に関わる</span></div>
+    </div>
+  </section>
+
+  <section class="modes-intro">
+    <h2>3つの遊び方</h2>
+    <div class="mode-cards">
+      <a class="mode-card" href="#free">
+        <span class="mc-tag">実験</span>
+        <h3>じゆうに遊ぶ</h3>
+        <p>スライダーや母音図、スペクトルの山をドラッグして、声がどう変わるかを自由に試せます。男性・女性・子どもの声にも切り替えられます。</p>
+        <span class="mc-go">ひらく →</span>
+      </a>
+      <a class="mode-card" href="#maker">
+        <span class="mc-tag">ゲーム</span>
+        <h3>母音メイカー</h3>
+        <p>60秒で、お題の母音を F1・F2 を動かして作るタイムアタック。3段階の難易度があり、「むずかしい」は母音図なしで耳とスペクトルだけが頼りです。</p>
+        <span class="mc-go">あそぶ →</span>
+      </a>
+      <a class="mode-card" href="#quiz">
+        <span class="mc-tag">ゲーム</span>
+        <h3>聞き取りクイズ</h3>
+        <p>計算で作った声を聞いて、何の母音か答える全10問。2つの母音の境目の音では、自分の耳と計算の答えが食い違うこともあります。</p>
+        <span class="mc-go">あそぶ →</span>
+      </a>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>母音工房は、ブラウザの Web Audio API で音を合成しています。インストールは不要で、データはどこにも送信されません。</p>
+    <p><a href="https://github.com/kentagogojp/formant-vowels" target="_blank" rel="noopener">ソースコード（GitHub）</a></p>
+  </footer>
+</main>
+
+<div class="wrap" id="app-view">
   <header class="top">
     <div class="brand">
-      <h1>母音工房<span class="dots" aria-hidden="true"><i style="background:var(--v-a)"></i><i style="background:var(--v-i)"></i><i style="background:var(--v-u)"></i><i style="background:var(--v-e)"></i><i style="background:var(--v-o)"></i></span></h1>
+      <a class="home" href="#top">← トップ</a>
+      <h1><a href="#top" class="home-title">母音工房</a><span class="dots" aria-hidden="true"><i style="background:var(--v-a)"></i><i style="background:var(--v-i)"></i><i style="background:var(--v-u)"></i><i style="background:var(--v-e)"></i><i style="background:var(--v-o)"></i></span></h1>
       <p>声の高さ F0 と、フォルマント F1・F2 を動かして「あいうえお」を作ろう</p>
     </div>
     <div class="seg" id="voices" role="radiogroup" aria-label="声のタイプ"></div>
@@ -148,5 +224,6 @@
 <script src="js/app.js"></script>
 <script src="js/game.js"></script>
 <script src="js/quiz.js"></script>
+<script src="js/landing.js"></script>
 </body>
 </html>

@@ -216,7 +216,7 @@
   }
 
   function init() {
-    document.querySelectorAll('.mode-btn').forEach((b) => b.addEventListener('click', () => { if (!b.disabled) setMode(b.dataset.mode); }));
+    document.querySelectorAll('.mode-btn').forEach((b) => b.addEventListener('click', () => { if (!b.disabled) location.hash = b.dataset.mode; }));
     const lv = $('#g-levels');
     for (const id in LEVELS) {
       const b = document.createElement('button');
@@ -232,7 +232,6 @@
     $('#g-quit').addEventListener('click', () => { stopGame(); window.App.togglePlay(false); show('ready'); renderReady(); });
     $('#r-again').addEventListener('click', startGame);
     $('#r-levels').addEventListener('click', () => { show('ready'); renderReady(); });
-    document.body.dataset.mode = 'free';
   }
 
   window.Game = { onKey, setMode };
